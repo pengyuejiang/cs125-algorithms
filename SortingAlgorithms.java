@@ -5,12 +5,13 @@ import java.util.ArrayList;
 /**
  * A class to demonstrate some of the most commonly used sorting algorithms.
  * For the purpose of demonstration and simplicity,
- * we shall only implement the algorithms on integer arrays.
+ * we shall only implement the algorithms with integer arrays.
+ * The demonstration list is: [4, 15, 6, 0, -1, 2, -20, 5].
  */
 public class SortingAlgorithms {
 
     /**
-     * Prohibit the user from instantiate the class.
+     * Privatize the construtor to prohibit the user from instantiate the class.
      */
     private SortingAlgorithms() {}
 
@@ -19,22 +20,37 @@ public class SortingAlgorithms {
      * @param original the original array
      * @return sorted new array
      */
+    /*
+     * The idea: Expand the ordered sublist at the front once at a time
+     * 
+     * 4        15, 6, 0, -1, 2, -20, 5
+     * 4, 15        6, 0, -1, 2, -20, 5
+     * 4, 6, 15        0, -1, 2, -20, 5
+     * 0, 4, 6, 15        -1, 2, -20, 5
+     * -1, 0, 4, 6, 15        2, -20, 5
+     * -1, 0, 2, 4, 6, 15        -20, 5
+     * -20, -1, 0, 2, 4, 6, 15        5
+     * -20, -1, 0, 2, 4, 5, 6, 15        DONE!!!
+     */
     public static int[] insertionSort(int[] original) {
         if (original == null || original.length < 2) return original;
+        // Make a copy so that the original array will not be damaged
         int[] sorted = Arrays.copyOf(original, original.length);
 
-        // Going through every element left to right
+        // Run the outer loop to go through every element
         for (int i = 1; i < sorted.length; i++) {
-            // Going from right to left to check
+            // Gradually expand the ordered sublist at the front
+            // once a time
             for (int j = i; j > 0; j--) {
-                // If out of place
+                // If out of place in the order sublist
                 if (sorted[j - 1] > sorted[j]) {
                     // Swap
                     int temp = sorted[j - 1];
                     sorted[j - 1] = sorted[j];
                     sorted[j] = temp;
                 } else {
-                    // Did not swap means correct order, break
+                    // Did not swap means correct order
+                    // in the ordered sublist, break
                     break;
                 }
             }
@@ -48,8 +64,19 @@ public class SortingAlgorithms {
      * @param original the original array
      * @return new sorted array
      */
+    /*
+     * The idea: Divide and conquer, then combine ordered parts with auxiliary function
+     * 1. [4, 15, 6, 0, -1, 2, -20, 5]
+     * 2. [4, 15, 6, 0], [-1, 2, -20, 5]
+     * 3. [4, 15], [6, 0], [-1, 2], [-20, 5]
+     * 4. [4], [15], [6], [0], [-1], [2], [-20], [5]
+     * 5. [4, 15], [0, 6], [-1, 2], [-20, 5]
+     * 6. [0, 4, 6, 15], [-20, -1, 2, 5]
+     * 7. [-20, -1, 0, 2, 4, 5, 6, 15]        DONE!!!
+     */
     public static int[] mergeSort(int[] original) {
         if (original == null || original.length < 2) return original;
+        // This won't damage the original array because they use copies
         // Base case
         if (original.length == 2) {
             return merge(Arrays.copyOfRange(original, 0, 1),
@@ -93,6 +120,47 @@ public class SortingAlgorithms {
     }
 
     /**
+     * Sort the given array into a new array in ascending order with bubble sort.
+     * @param original the original array
+     * @return new sorted array
+     */
+    /*
+     * The idea: Confirm the largest element once at a time, like bubble pop up
+     * 
+     * 4, 15, 6, 0, -1, 2, -20, 5
+     * 4, 6, 0, -1, 2, -20, 5        15
+     * 4, 0, -1, 2, -20, 5        6, 15
+     * 0, -1, 2, -20, 4        5, 6, 15
+     * -1, 0, -20, 2        4, 5, 6, 15
+     * -1, -20, 0        2, 4, 5, 6, 15
+     * -20, -1        0, 2, 4, 5, 6, 15
+     * -20        -1, 0, 2, 4, 5, 6, 15
+     *       -20, -1, 0, 2, 4, 5, 6, 15        DONE!!!
+     */
+    public static int[] bubbleSort(int[] original) {
+        if (original == null || original.length < 2) return original;
+        // Make a copy so that the original array will not be damaged
+        int[] sorted = Arrays.copyOf(original, original.length);
+
+        // Run through the outer loop to get the biggest number one at a time
+        for (int i = sorted.length - 1; i > 0; i--) {
+            // Run through the inner loop
+            // to move up the largest number through comparison
+            for (int j = 1; j <= i; j++) {
+                // If out of place
+                if (sorted[j - 1] > sorted[j]) {
+                    // Swap
+                    int temp = sorted[j - 1];
+                    sorted[j - 1] = sorted[j];
+                    sorted[j] = temp;
+                }
+            }
+        }
+
+        return sorted;
+    }
+
+    /**
      * Sort the given array into a new array in ascending order with sleep sort.
      * Of course this is not tought in class, it's just for fun.
      * @param original the original array
@@ -101,6 +169,7 @@ public class SortingAlgorithms {
     public static int[] sleepSort(int[] original) {
         if (original == null || original.length < 2) return original;
         int[] sorted = new int[original.length];
+
         CountDownLatch signal = new CountDownLatch(original.length);
         // To be accessible by all threads
         ArrayList<Integer> list = new ArrayList<>();
@@ -121,8 +190,6 @@ public class SortingAlgorithms {
                     signal.countDown();
                     try {
                         signal.await();
-                        // Go to sleep
-                        // When you wake up, you'll be sorted
                         Thread.sleep((element + SHIFT) * LAG_INDEX);
                         list.add(element);
                     } catch (InterruptedException e) {
@@ -142,17 +209,22 @@ public class SortingAlgorithms {
             e.printStackTrace();
         }
         // Turn the list into array
-        for (int i = 0; i < sorted.length; i++) {
-            sorted[i] = list.get(i);
-        }
+        for (int i = 0; i < sorted.length; i++) sorted[i] = list.get(i);
+
         return sorted;
     }
 
+    /**
+     * Sort the given array into a new array in ascending order with quick sort.
+     * @param original the original array
+     * @return new sorted array
+     */
     public static int[] quickSort(int[] original) {
         if (original == null || original.length < 2) return original;
-        int[] sorted = new int[original.length];
+        // Make a copy so that the original array will not be damaged
+        int[] sorted = Arrays.copyOf(original, original.length);
 
-        
+        // To be implemented...
 
         return sorted;
     }
