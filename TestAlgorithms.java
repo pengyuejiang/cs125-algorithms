@@ -13,9 +13,10 @@ public class TestAlgorithms {
                 System.out.println(Algorithms.iterativeFibonacci(i));
             }
             System.out.println("Sorting algorithms!");
-            int[] test = new int[] {4, 15, 6, 0, -1, 2};
+            int[] test = new int[] {4, 15, 6, 0, -1, 2, -20, 4};
             System.out.println(Arrays.toString(SortingAlgorithms.insertionSort(test)));
             System.out.println(Arrays.toString(SortingAlgorithms.mergeSort(test)));
+            System.out.println("Sleep Sort: " + Arrays.toString(SortingAlgorithms.sleepSort(test)));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
