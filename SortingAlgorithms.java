@@ -161,63 +161,26 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Sort the given array and return a new array in ascending order with sleep sort.
-     * Of course this is not tought in class, it's just for fun.
-     * @param original the original array
-     * @return new sorted array
-     */
-    public static int[] sleepSort(int[] original) {
-        if (original == null || original.length < 2) return original;
-        int[] sorted = new int[original.length];
-
-        CountDownLatch signal = new CountDownLatch(original.length);
-        // To be accessible by all threads
-        ArrayList<Integer> list = new ArrayList<>();
-        // Check for negative values
-        int shift = 0;
-        for (int i = 0; i < original.length; i++) {
-            shift = original[i] < shift ? original[i] : shift;
-        }
-        final int SHIFT = shift * -1;
-        // Determines how fast your sorting runs,
-        // decreasing this number does have a risk
-        final int LAG_INDEX = 5;
-        // Run a thread for each element
-        for (int element : original) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    signal.countDown();
-                    try {
-                        signal.await();
-                        Thread.sleep((element + SHIFT) * LAG_INDEX);
-                        list.add(element);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-        // Main method need to wait for the threads to finish
-        int sum = 0;
-        for (int i = 0; i < original.length; i++) {
-            sum += original[i];
-        }
-        try {
-            Thread.sleep((SHIFT * original.length + sum) * LAG_INDEX);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        // Turn the list into array
-        for (int i = 0; i < sorted.length; i++) sorted[i] = list.get(i);
-
-        return sorted;
-    }
-
-    /**
      * Wrapper function for quick sort.
      * @param original the original array
      * @return new sorted array
+     */
+    /*
+     * The idea: Divide the problem into smaller parts and finish them
+     * Kinda like merge sort, but performance varies
+     * 
+     * ^ Denotes the chosen pivot
+     * A Denotes previous pivot
+     * 
+     * [4, 15, 6, 0, -1, 2, -20, 5]
+     *  ^
+     * [-20, 0, -1, 2]    4    [15, 6, 5]
+     *  ^                 A     ^
+     * -20    [0, -1, 2]    4    [6, 5]    15
+     *  A      ^                  ^        A
+     * -20    -1    0    2    4    5    6    15
+     *              A                   A
+     * [-20, -1, 0, 2, 4, 5, 6, 15]        DONE!!!
      */
     public static int[] quickSort(int[] original) {
         if (original == null || original.length < 2) return original;
@@ -276,4 +239,59 @@ public class SortingAlgorithms {
         array[start] = temp;
         return pivotIndex;
     }
+
+    /**
+     * Sort the given array and return a new array in ascending order with sleep sort.
+     * Of course this is not tought in class, it's just for fun.
+     * @param original the original array
+     * @return new sorted array
+     */
+    public static int[] sleepSort(int[] original) {
+        if (original == null || original.length < 2) return original;
+        int[] sorted = new int[original.length];
+
+        CountDownLatch signal = new CountDownLatch(original.length);
+        // To be accessible by all threads
+        ArrayList<Integer> list = new ArrayList<>();
+        // Check for negative values
+        int shift = 0;
+        for (int i = 0; i < original.length; i++) {
+            shift = original[i] < shift ? original[i] : shift;
+        }
+        final int SHIFT = shift * -1;
+        // Determines how fast your sorting runs,
+        // decreasing this number does have a risk
+        final int LAG_INDEX = 5;
+        // Run a thread for each element
+        for (int element : original) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    signal.countDown();
+                    try {
+                        signal.await();
+                        Thread.sleep((element + SHIFT) * LAG_INDEX);
+                        list.add(element);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+        // Main method need to wait for the threads to finish
+        int sum = 0;
+        for (int i = 0; i < original.length; i++) {
+            sum += original[i];
+        }
+        try {
+            Thread.sleep((SHIFT * original.length + sum) * LAG_INDEX);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // Turn the list into array
+        for (int i = 0; i < sorted.length; i++) sorted[i] = list.get(i);
+
+        return sorted;
+    }
+
 }
