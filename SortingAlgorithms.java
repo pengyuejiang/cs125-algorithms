@@ -21,7 +21,8 @@ public class SortingAlgorithms {
      * @return sorted new array
      */
     /*
-     * The idea: Expand the ordered sublist at the front once at a time
+     * The idea: Expand the ordered sublist at the front once at a time,
+     * by checking where to insert a value in the unsorted region
      * 
      * 4        15, 6, 0, -1, 2, -20, 5
      * 4, 15        6, 0, -1, 2, -20, 5
@@ -66,6 +67,7 @@ public class SortingAlgorithms {
      */
     /*
      * The idea: Divide and conquer, then combine ordered parts with auxiliary function
+     * 
      * 1. [4, 15, 6, 0, -1, 2, -20, 5]
      * 2. [4, 15, 6, 0], [-1, 2, -20, 5]
      * 3. [4, 15], [6, 0], [-1, 2], [-20, 5]
@@ -238,6 +240,48 @@ public class SortingAlgorithms {
         array[pivotIndex] = array[start]; // Same as pivot value
         array[start] = temp;
         return pivotIndex;
+    }
+
+    /**
+     * Sort the given array and return a new array in ascending order with selection sort.
+     * @param original the original array
+     * @return new sorted array
+     */
+    /*
+     * The idea: Find a smallest value one at a time and append it
+     * to the end of a sorted sublist at the front
+     * 
+     *       4, 15, 6, 0, -1, 2, -20, 5
+     * -20        4, 15, 6, 0, -1, 2, 5
+     * -20, -1        4, 15, 6, 0, 2, 5
+     * -20, -1, 0        4, 15, 6, 2, 5
+     * -20, -1, 0, 2        4, 15, 6, 5
+     * -20, -1, 0, 2, 4        15, 6, 5
+     * -20, -1, 0, 2, 4, 5        15, 6
+     * -20, -1, 0, 2, 4, 5, 6        15
+     * -20, -1, 0, 2, 4, 5, 6, 15        DONE!!!
+     */
+    public static int[] selectionSort(int[] original) {
+        if (original == null || original.length < 2) return original;
+        // Make a copy so that the original array will not be damaged
+        int[] sorted = Arrays.copyOf(original, original.length);
+
+        // Run through each element, confirm a smallest value each time
+        for (int i = 0; i < sorted.length; i++) {
+            int minIndex = i;
+            // Check each element against the smallest value
+            for (int j = i; j < sorted.length; j++) {
+                // If found smaller value, update its position
+                if (sorted[j] < sorted[minIndex]) minIndex = j;
+            }
+            // Append the smallest value to the ordered sublist
+            // through swap the value
+            int temp = sorted[minIndex];
+            sorted[minIndex] = sorted[i];
+            sorted[i] = temp;
+        }
+
+        return sorted;
     }
 
     /**
