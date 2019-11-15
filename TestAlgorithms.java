@@ -18,6 +18,7 @@ public class TestAlgorithms {
             System.out.println("Merge Sort: " + Arrays.toString(SortingAlgorithms.mergeSort(test)));
             System.out.println("Bubble Sort: " + Arrays.toString(SortingAlgorithms.bubbleSort(test)));
             System.out.println("Sleep Sort: " + Arrays.toString(SortingAlgorithms.sleepSort(test)));
+            System.out.println("Quick Sort: " + Arrays.toString(SortingAlgorithms.quickSort(test)));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }

@@ -16,7 +16,7 @@ public class SortingAlgorithms {
     private SortingAlgorithms() {}
 
     /**
-     * Sort the given array into a new array in ascending order with insertion sort.
+     * Sort the given array and return a new array in ascending order with insertion sort.
      * @param original the original array
      * @return sorted new array
      */
@@ -60,7 +60,7 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Sort the given array into a new array in ascending order with merge sort.
+     * Sort the given array and return a new array in ascending order with merge sort.
      * @param original the original array
      * @return new sorted array
      */
@@ -120,7 +120,7 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Sort the given array into a new array in ascending order with bubble sort.
+     * Sort the given array and return a new array in ascending order with bubble sort.
      * @param original the original array
      * @return new sorted array
      */
@@ -161,7 +161,7 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Sort the given array into a new array in ascending order with sleep sort.
+     * Sort the given array and return a new array in ascending order with sleep sort.
      * Of course this is not tought in class, it's just for fun.
      * @param original the original array
      * @return new sorted array
@@ -215,7 +215,7 @@ public class SortingAlgorithms {
     }
 
     /**
-     * Sort the given array into a new array in ascending order with quick sort.
+     * Wrapper function for quick sort.
      * @param original the original array
      * @return new sorted array
      */
@@ -223,9 +223,57 @@ public class SortingAlgorithms {
         if (original == null || original.length < 2) return original;
         // Make a copy so that the original array will not be damaged
         int[] sorted = Arrays.copyOf(original, original.length);
-
-        // To be implemented...
-
+        quickSort(sorted, 0, sorted.length);
         return sorted;
+    }
+
+    /**
+     * Sort the given range of the array in ascending order with quick sort.
+     * @param array the array to sort
+     * @param start start index of the sort, inclusive
+     * @param end end index of the sort, exclusive
+     */
+    private static void quickSort(int[] array, int start, int end) {
+        if (start < end) {
+            // Find the pivot index to know where to break the problem
+            int pivotIndex = partition(array, start, end);
+            // Sort the part smaller than the pivot
+            quickSort(array, start, pivotIndex);
+            // Sort the part larger than the pivot
+            quickSort(array, pivotIndex + 1, end);
+            // There you go, divide and conquer
+        }
+        // If start is equal or larger than end, the part contains no element
+        // Do nothing then
+    }
+
+    /**
+     * Auxiliary function for quick sort, partition the array for the given range.
+     * THIS WILL ALTER THE ARRAY PASSED.
+     * @param array the array to partition for
+     * @param start the start index of the partition, inclusive
+     * @param end the end index of the partition, exclusive
+     * @return index of the pivot
+     */
+    private static int partition(int[] array, int start, int end) {
+        if (array.length < 2 || start >= array.length) return start;
+        int pivotIndex = start;
+        // We'll use the first element as the pivot
+        int pivotValue = array[start];
+        // Run through elements in the given range
+        for (int i = start + 1; i < end; i++) {
+            if (array[i] < pivotValue) {
+                // Swap elements smaller than pivotValue to left of the pivot position
+                pivotIndex++;
+                int temp = array[i];
+                array[i] = array[pivotIndex];
+                array[pivotIndex] = temp;
+            }
+        }
+        // Swap pivot with the last element of the smaller sublist
+        int temp = array[pivotIndex];
+        array[pivotIndex] = array[start]; // Same as pivot value
+        array[start] = temp;
+        return pivotIndex;
     }
 }
