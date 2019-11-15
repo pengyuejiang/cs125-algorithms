@@ -199,7 +199,10 @@ public class SortingAlgorithms {
      * @param end end index of the sort, exclusive
      */
     private static void quickSort(int[] array, int start, int end) {
-        if (start < end) {
+        // If end is larger than start by 1 or less, the sublist contains
+        // 1 or less elements, base case reached, do nothing
+        // Keep calling quick sort on such sublist will result StackOverFlowError
+        if (start < end - 1) {
             // Find the pivot index to know where to break the problem
             int pivotIndex = partition(array, start, end);
             // Sort the part smaller than the pivot
@@ -208,8 +211,6 @@ public class SortingAlgorithms {
             quickSort(array, pivotIndex + 1, end);
             // There you go, divide and conquer
         }
-        // If start is equal or larger than end, the part contains no element
-        // Do nothing then
     }
 
     /**
